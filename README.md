@@ -1,54 +1,43 @@
-# 🌧️ Buy Different – Rain Protection Landing Page
+# 🚀 My Projects Portfolio
 
 <p align="center">
-  A modern, responsive landing page for premium rain products.<br>
-  Clean UI • Smooth UX • Mobile Friendly
+  A collection of my web development projects.<br>
+  Clean UI • Modern Design • Real Client Work
 </p>
 
 <p align="center">
-  <a href="https://classplatform2026-droid.github.io/landing/">
-    <img src="https://img.shields.io/badge/Live-Demo-00a896?style=for-the-badge&logo=google-chrome&logoColor=white"/>
-  </a>
-  <img src="https://img.shields.io/badge/Responsive-Yes-success?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Status-Completed-blue?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Projects-Multiple-00a896?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Focus-Web%20Development-blue?style=for-the-badge"/>
 </p>
 
 ---
 
-## 🔗 Live Preview
+## 📂 Projects List
 
-👉 https://classplatform2026-droid.github.io/landing/
+### 🌧️ Buy Different – Rain Protection Landing Page  
+🔗 Live: https://classplatform2026-droid.github.io/landing/  
 
----
-
-## ✨ Features
-
-- 📱 Fully responsive design (Mobile + Desktop)  
-- 🛍️ Product showcase section  
-- 🧾 Dynamic order form with price calculation  
-- 🎟️ Coupon discount system  
-- 📲 WhatsApp order integration  
-- 🎨 Clean and modern UI/UX  
+> A modern eCommerce-style landing page with product showcase, order system, and WhatsApp integration.
 
 ---
 
-## 🚀 Tech Stack
-
-- HTML5  
-- CSS3  
-- JavaScript (Vanilla)  
+👉 More projects coming soon...
 
 ---
 
-## 💼 Hire Me
+## 💼 Services
 
-Need a modern website or landing page like this?
+I build:
 
-👉 Feel free to contact me anytime.
+- 🌐 Landing Pages  
+- 🛒 eCommerce Websites  
+- 📱 Responsive Websites  
+- ⚡ Fast & Clean UI Design  
 
 ---
 
-## 📞 Contact
+## 📞 Contact Me
 
 - 👤 **Md Mutasim Billah Saad**  
 - 📱 WhatsApp: https://wa.me/8801915647290  
@@ -57,7 +46,7 @@ Need a modern website or landing page like this?
 
 ## ⭐ Support
 
-If you like this project, please consider giving it a star ⭐  
-It helps and motivates me to build more awesome projects!
+If you like my work, consider giving this repo a star ⭐  
+It motivates me to create more amazing projects!
 
 ---
