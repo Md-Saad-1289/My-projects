@@ -6,23 +6,21 @@
 <title>ShopMaster — Launching Tonight</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 
 :root{
-  --bg:#06050f;
-  --surface:rgba(255,255,255,.045);
-  --surface2:rgba(255,255,255,.07);
+  --bg:#07050e;
+  --surface:rgba(255,255,255,.05);
+  --surface2:rgba(255,255,255,.08);
   --border:rgba(255,255,255,.07);
-  --border2:rgba(255,255,255,.13);
+  --border2:rgba(255,255,255,.14);
   --text:#f0eeff;
   --muted:#8a87a8;
-  --accent:#e8b86d;
-  --accent2:#c77dff;
   --gold1:#e8b86d;
   --gold2:#f5d08a;
+  --pur:#c77dff;
   --grad:linear-gradient(135deg,#e8b86d,#c77dff);
 }
 
@@ -39,87 +37,128 @@ body{
   position:relative;
 }
 
-#particles-js{
+/* ========= CANVAS BG ========= */
+#bgCanvas{
   position:fixed;
   inset:0;
   z-index:0;
   pointer-events:none;
 }
 
-.aurora{
+/* ========= FLOATING ICONS ========= */
+.float-icon{
   position:fixed;
-  width:900px;
-  height:900px;
-  border-radius:50%;
+  z-index:1;
   pointer-events:none;
-  z-index:0;
+  opacity:0;
+  animation:floatUp linear infinite;
+  font-size:22px;
+  filter:blur(0px);
+  user-select:none;
 }
-.aurora1{
-  background:radial-gradient(ellipse,rgba(199,125,255,.13) 0%,transparent 70%);
-  top:-300px;right:-200px;
-  animation:drift1 14s infinite alternate ease-in-out;
-}
-.aurora2{
-  background:radial-gradient(ellipse,rgba(232,184,109,.09) 0%,transparent 70%);
-  bottom:-300px;left:-200px;
-  animation:drift2 18s infinite alternate ease-in-out;
-}
-.aurora3{
-  width:500px;height:500px;
-  background:radial-gradient(ellipse,rgba(100,80,220,.1) 0%,transparent 70%);
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  animation:drift3 10s infinite alternate ease-in-out;
+@keyframes floatUp{
+  0%{transform:translateY(0) rotate(0deg) scale(1);opacity:0;}
+  10%{opacity:.55;}
+  80%{opacity:.35;}
+  100%{transform:translateY(-100vh) rotate(360deg) scale(.6);opacity:0;}
 }
 
-@keyframes drift1{from{transform:translate(0,0) scale(1);}to{transform:translate(-80px,60px) scale(1.1);}}
-@keyframes drift2{from{transform:translate(0,0) scale(1);}to{transform:translate(60px,-80px) scale(1.08);}}
-@keyframes drift3{from{transform:translate(-50%,-50%) scale(1);}to{transform:translate(-50%,-50%) scale(1.15);}}
-
-/* grid overlay */
-.grid-overlay{
+/* ========= SCANLINE ========= */
+.scanline{
   position:fixed;
-  inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
-  background-size:60px 60px;
-  z-index:0;
+  top:0;left:0;right:0;
+  height:3px;
+  background:linear-gradient(90deg,transparent,rgba(199,125,255,.5),rgba(232,184,109,.5),transparent);
+  z-index:1;
+  animation:scan 5s linear infinite;
   pointer-events:none;
-  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 40%,transparent 100%);
 }
+@keyframes scan{from{top:-4px;}to{top:100vh;}}
 
-.wrap{
-  position:relative;
-  z-index:2;
+/* ========= TICKER ========= */
+.ticker-wrap{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  z-index:3;
+  background:rgba(0,0,0,.7);
+  border-top:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(16px);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.ticker-label{
   width:100%;
-  max-width:700px;
+  background:linear-gradient(135deg,#e8b86d,#c77dff);
+  color:#0d0a1a;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  padding:6px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  white-space:nowrap;
+  box-shadow:0 0 24px rgba(232,184,109,.5),0 0 48px rgba(199,125,255,.3);
+}
+.live-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#0d0a1a;
+  animation:livepulse 1s infinite;
+  flex-shrink:0;
+}
+@keyframes livepulse{
+  0%,100%{transform:scale(1);opacity:1;}
+  50%{transform:scale(1.7);opacity:.4;}
+}
+.ticker-track{
+  display:flex;
+  white-space:nowrap;
+  animation:tickerScroll 30s linear infinite;
+}
+@keyframes tickerScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}</p>
+.ticker-item{
+  font-size:12.5px;
+  color:var(--muted);
+  padding:0 28px;
+  border-right:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;gap:8px;
+}
+.ticker-item span{color:var(--gold2);font-weight:600;}
+
+/* ========= COUNTDOWN RING ========= */
+.ring-wrap{
+  position:relative;
+  width:200px;
+  height:200px;
+  margin:0 auto 32px;
+}
+.ring-wrap svg{position:absolute;inset:0;width:100%;height:100%;}
+#ringCircle{
+  stroke-dasharray:565;
+  stroke-dashoffset:0;
+  transition:stroke-dashoffset 1s linear;
+  transform-origin:center;
+  transform:rotate(-90deg);
 }
 
-/* ---- CARD ---- */
+/* ========= MAIN CARD ========= */
+.wrap{position:relative;z-index:2;width:100%;max-width:700px;}
+
 .card{
-  background:var(--surface);
+  background:rgba(12,9,28,.75);
   border:1px solid var(--border);
   border-radius:32px;
-  padding:56px 52px;
+  padding:52px 48px 44px;
   text-align:center;
   position:relative;
   overflow:hidden;
-  backdrop-filter:blur(30px);
-  box-shadow:0 0 0 1px rgba(255,255,255,.03) inset,0 40px 80px rgba(0,0,0,.5);
+  backdrop-filter:blur(40px);
+  box-shadow:0 0 0 1px rgba(255,255,255,.04) inset,0 40px 100px rgba(0,0,0,.6);
+  margin-bottom:44px;
 }
-
-.card::before{
-  content:'';
-  position:absolute;
-  top:0;left:50%;
-  transform:translateX(-50%);
-  width:70%;
-  height:1px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
-}
-
-/* top line accent */
 .card::after{
   content:'';
   position:absolute;
@@ -129,296 +168,148 @@ body{
   border-radius:32px 32px 0 0;
 }
 
-/* ---- PILL BADGE ---- */
+/* shimmer sweep */
+.card::before{
+  content:'';
+  position:absolute;
+  top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);
+  animation:shimmer 6s infinite;
+  pointer-events:none;
+}
+@keyframes shimmer{0%{left:-100%;}100%{left:200%;}}
+
 .pill{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 18px;
-  border-radius:999px;
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 18px;border-radius:999px;
   border:1px solid rgba(232,184,109,.25);
   background:rgba(232,184,109,.07);
   color:var(--gold2);
-  font-size:12.5px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  font-weight:500;
-  margin-bottom:32px;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;
+  margin-bottom:28px;
 }
+.pill-dot{width:6px;height:6px;border-radius:50%;background:var(--gold1);animation:blink 1.8s infinite;}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 6px var(--gold1);}50%{opacity:.3;box-shadow:none;}}
 
-.pill-dot{
-  width:6px;height:6px;
-  border-radius:50%;
-  background:var(--gold1);
-  animation:blink 2s infinite;
-}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
-
-/* ---- LOGO ---- */
-.logo-ring{
-  width:110px;height:110px;
-  margin:0 auto 28px;
-  border-radius:28px;
-  background:var(--surface2);
-  border:1px solid var(--border2);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-  animation:float 4s ease-in-out infinite;
-}
-.logo-ring::before{
-  content:'';
+/* logo inside ring */
+.logo-inner{
   position:absolute;
-  inset:-1px;
-  border-radius:29px;
-  background:var(--grad);
-  z-index:-1;
-  opacity:.4;
+  inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;
 }
-.logo-ring svg{width:44px;height:44px;}
-@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.logo-inner svg{width:38px;height:38px;}
+.logo-pct{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--gold2);opacity:.8;}
 
-/* ---- HEADING ---- */
 h1{
   font-family:'Syne',sans-serif;
-  font-size:72px;
-  font-weight:800;
-  letter-spacing:-3px;
-  line-height:.95;
+  font-size:68px;font-weight:800;letter-spacing:-3px;line-height:.95;
   margin-bottom:6px;
   background:var(--grad);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
+.h1-sub{font-size:12px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.subtitle{color:var(--muted);font-size:15px;line-height:1.85;max-width:460px;margin:0 auto 36px;}
 
-.h1-sub{
-  font-size:13px;
-  letter-spacing:.25em;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin-bottom:14px;
-  font-weight:400;
-}
-
-.subtitle{
-  color:var(--muted);
-  font-size:15.5px;
-  line-height:1.85;
-  max-width:480px;
-  margin:0 auto 42px;
-}
-
-/* ---- DIVIDER ---- */
-.divider{
-  width:40px;height:1px;
-  background:var(--border2);
-  margin:0 auto 42px;
-}
-
-/* ---- COUNTDOWN ---- */
-.countdown{
-  display:flex;
-  justify-content:center;
-  gap:14px;
-  flex-wrap:wrap;
-  margin-bottom:24px;
-}
-
+/* countdown boxes */
+.countdown{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
 .t-box{
-  min-width:140px;
-  padding:28px 20px 22px;
-  border-radius:22px;
-  background:rgba(0,0,0,.25);
-  border:1px solid var(--border);
-  position:relative;
-  overflow:hidden;
-  flex:1;
-  max-width:160px;
+  min-width:130px;padding:24px 16px 18px;border-radius:22px;
+  background:rgba(0,0,0,.3);border:1px solid var(--border);
+  position:relative;overflow:hidden;flex:1;max-width:150px;
 }
-
-.t-box::after{
-  content:'';
-  position:absolute;
-  bottom:0;left:0;right:0;
-  height:1px;
-  background:var(--grad);
-  opacity:.4;
-}
-
+.t-box::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--grad);opacity:.5;}
 .t-num{
-  font-family:'Syne',sans-serif;
-  font-size:56px;
-  font-weight:700;
-  line-height:1;
-  color:var(--text);
-  display:block;
-  transition:transform .15s;
+  font-family:'Syne',sans-serif;font-size:52px;font-weight:700;line-height:1;
+  color:var(--text);display:block;
 }
+.t-lbl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:7px;display:block;}
 
-.t-lbl{
-  font-size:11px;
-  letter-spacing:.15em;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin-top:8px;
-  display:block;
+/* fun fact box */
+.funfact{
+  margin:0 0 28px;
+  padding:14px 18px;
+  border-radius:16px;
+  background:rgba(199,125,255,.06);
+  border:1px solid rgba(199,125,255,.12);
+  font-size:13.5px;
+  color:#c4b5f5;
+  line-height:1.7;
+  min-height:52px;
+  transition:opacity .4s;
 }
+.funfact strong{color:var(--gold2);}
 
-/* ---- STATUS ---- */
-.status{
-  color:rgba(199,125,255,.75);
-  font-size:14px;
-  min-height:22px;
-  margin-bottom:32px;
-  letter-spacing:.02em;
-}
+.status{color:rgba(199,125,255,.7);font-size:13px;min-height:20px;margin-bottom:24px;letter-spacing:.02em;}
 
-/* ---- INFO ROW ---- */
-.info-row{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:40px;
-}
-
+.info-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
 .info-chip{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:10px 16px;
-  border-radius:14px;
-  border:1px solid var(--border);
-  background:var(--surface);
-  font-size:13px;
-  color:var(--muted);
+  display:flex;align-items:center;gap:7px;padding:9px 15px;
+  border-radius:14px;border:1px solid var(--border);background:var(--surface);
+  font-size:12.5px;color:var(--muted);
 }
+.info-chip svg{width:14px;height:14px;stroke:var(--gold1);flex-shrink:0;}
 
-.info-chip svg{width:15px;height:15px;stroke:var(--accent);flex-shrink:0;}
-
-.footer-txt{
-  font-size:12px;
-  color:#3d3b50;
-  margin-top:32px;
-  letter-spacing:.05em;
-}
+.footer-txt{font-size:11.5px;color:#2e2b40;margin-top:28px;letter-spacing:.05em;}
 
 /* ========= AFTER LAUNCH ========= */
 #afterLaunch{display:none;animation:popIn .7s cubic-bezier(.34,1.56,.64,1);}
 @keyframes popIn{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
-
-.launch-emoji{
-  font-size:80px;
-  display:block;
-  margin-bottom:20px;
-  animation:bob 1.8s ease-in-out infinite;
-}
-@keyframes bob{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-10px) rotate(-5deg);}}
-
+.launch-emoji{font-size:76px;display:block;margin-bottom:18px;animation:bob 1.8s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-10px) rotate(3deg);}}
 .launch-headline{
-  font-family:'Syne',sans-serif;
-  font-size:58px;
-  font-weight:800;
-  letter-spacing:-2px;
-  line-height:1;
-  margin-bottom:14px;
-  background:var(--grad);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text;
+  font-family:'Syne',sans-serif;font-size:56px;font-weight:800;letter-spacing:-2px;line-height:1;
+  margin-bottom:12px;
+  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
-
-.launch-sub{
-  color:var(--muted);
-  font-size:15.5px;
-  line-height:1.8;
-  max-width:480px;
-  margin:0 auto 36px;
-}
-
-/* cred box */
-.cred-box{
-  background:rgba(0,0,0,.3);
-  border:1px solid var(--border);
-  border-radius:22px;
-  padding:8px;
-  margin-bottom:20px;
-}
-
+.launch-sub{color:var(--muted);font-size:15px;line-height:1.8;max-width:460px;margin:0 auto 32px;}
+.cred-box{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:22px;padding:8px;margin-bottom:18px;}
 .cred-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:14px 16px;
-  border-radius:16px;
-  background:var(--surface);
-  margin-bottom:6px;
-  flex-wrap:wrap;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px 16px;border-radius:16px;background:var(--surface);margin-bottom:6px;flex-wrap:wrap;
 }
 .cred-row:last-child{margin-bottom:0;}
-
 .cred-info{text-align:left;}
-.cred-lbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-.cred-val{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;letter-spacing:.01em;}
-
+.cred-lbl{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.cred-val{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;}
 .copy-btn{
-  display:flex;align-items:center;gap:7px;
-  padding:10px 18px;
-  border:none;
-  border-radius:12px;
-  background:var(--grad);
-  color:#0d0a1a;
-  font-size:13px;
-  font-weight:700;
-  cursor:pointer;
-  transition:transform .2s,opacity .2s;
-  flex-shrink:0;
-  font-family:'DM Sans',sans-serif;
+  display:flex;align-items:center;gap:7px;padding:10px 17px;border:none;border-radius:12px;
+  background:var(--grad);color:#0d0a1a;font-size:13px;font-weight:700;cursor:pointer;
+  transition:transform .2s,opacity .2s;flex-shrink:0;font-family:'DM Sans',sans-serif;
 }
 .copy-btn:hover{transform:translateY(-2px);opacity:.9;}
-.copy-btn svg{width:14px;height:14px;stroke:currentColor;flex-shrink:0;}
-
-/* enter btn */
+.copy-btn svg{width:13px;height:13px;stroke:currentColor;flex-shrink:0;}
 .enter-btn{
-  width:100%;
-  padding:18px;
-  border:none;
-  border-radius:18px;
-  background:var(--grad);
-  color:#0d0a1a;
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-  letter-spacing:.02em;
+  width:100%;padding:18px;border:none;border-radius:18px;background:var(--grad);
+  color:#0d0a1a;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.02em;
   display:flex;align-items:center;justify-content:center;gap:10px;
-  transition:transform .25s,box-shadow .25s;
-  font-family:'DM Sans',sans-serif;
+  transition:transform .25s,box-shadow .25s;font-family:'DM Sans',sans-serif;
 }
-.enter-btn:hover{transform:translateY(-3px);box-shadow:0 20px 50px rgba(232,184,109,.25);}
+.enter-btn:hover{transform:translateY(-3px);box-shadow:0 20px 50px rgba(232,184,109,.28);}
 .enter-btn svg{width:18px;height:18px;stroke:#0d0a1a;}
 
-/* ---- RESPONSIVE ---- */
-@media(max-width:680px){
-  body{overflow-y:auto;overflow-x:hidden;align-items:flex-start;padding:16px;}
-  .card{padding:32px 20px;border-radius:24px;}
-  h1{font-size:50px;letter-spacing:-2px;}
-  .launch-headline{font-size:40px;}
-  .t-box{min-width:90px;padding:20px 12px 16px;}
-  .t-num{font-size:38px;}
-  .logo-ring{width:90px;height:90px;border-radius:22px;}
+@media(max-width:640px){
+  body{overflow-y:auto;overflow-x:hidden;align-items:flex-start;padding:12px;}
+  .card{padding:28px 16px 24px;border-radius:22px;margin-bottom:50px;}
+  h1{font-size:46px;letter-spacing:-2px;}
+  .launch-headline{font-size:38px;}
+  .t-box{min-width:80px;padding:18px 10px 14px;}
+  .t-num{font-size:34px;}
+  .ring-wrap{width:160px;height:160px;}
 }
 </style>
 </head>
 <body>
 
-<div id="particles-js"></div>
-<div class="aurora aurora1"></div>
-<div class="aurora aurora2"></div>
-<div class="aurora aurora3"></div>
-<div class="grid-overlay"></div>
+<canvas id="bgCanvas"></canvas>
+<div class="scanline"></div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-label"><div class="live-dot"></div>🔴 &nbsp;LIVE &nbsp;— &nbsp;ShopMaster Launching Tonight</div>
+  <div style="overflow:hidden;height:38px;display:flex;align-items:center;">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+</div>
 
 <div class="wrap">
 <div class="card">
@@ -426,180 +317,291 @@ h1{
   <!-- BEFORE LAUNCH -->
   <div id="beforeLaunch">
 
-    <div class="pill">
-      <div class="pill-dot"></div>
-      Official Product Launch
-    </div>
+    <div class="pill"><div class="pill-dot"></div>Official Product Launch — Bangladesh</div>
 
-    <div class="logo-ring">
-      <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="4" y="10" width="36" height="28" rx="5" stroke="url(#lg)" stroke-width="2.5" stroke-linejoin="round"/>
-        <path d="M4 18h36" stroke="url(#lg)" stroke-width="2.5"/>
-        <path d="M14 14v-4M30 14v-4" stroke="url(#lg)" stroke-width="2.5" stroke-linecap="round"/>
-        <circle cx="15" cy="27" r="3" stroke="url(#lg2)" stroke-width="2"/>
-        <path d="M22 25h7M22 29h5" stroke="url(#lg2)" stroke-width="2" stroke-linecap="round"/>
+    <!-- RING COUNTDOWN -->
+    <div class="ring-wrap">
+      <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="lg" x1="4" y1="10" x2="40" y2="38" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#e8b86d"/>
-            <stop offset="1" stop-color="#c77dff"/>
-          </linearGradient>
-          <linearGradient id="lg2" x1="12" y1="24" x2="30" y2="32" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#e8b86d"/>
-            <stop offset="1" stop-color="#c77dff"/>
+          <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#e8b86d"/>
+            <stop offset="100%" stop-color="#c77dff"/>
           </linearGradient>
         </defs>
+        <circle cx="100" cy="100" r="90" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+        <circle id="ringCircle" cx="100" cy="100" r="90"
+          stroke="url(#ringGrad)" stroke-width="8"
+          stroke-linecap="round" fill="none"/>
       </svg>
+      <div class="logo-inner">
+        <svg viewBox="0 0 44 44" fill="none">
+          <rect x="4" y="10" width="36" height="28" rx="5" stroke="url(#lg)" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M4 18h36" stroke="url(#lg)" stroke-width="2.5"/>
+          <path d="M14 14v-4M30 14v-4" stroke="url(#lg)" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="15" cy="27" r="3" stroke="url(#lg2)" stroke-width="2"/>
+          <path d="M22 25h7M22 29h5" stroke="url(#lg2)" stroke-width="2" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="lg" x1="4" y1="10" x2="40" y2="38" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#e8b86d"/><stop offset="1" stop-color="#c77dff"/>
+            </linearGradient>
+            <linearGradient id="lg2" x1="12" y1="24" x2="30" y2="32" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#e8b86d"/><stop offset="1" stop-color="#c77dff"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="logo-pct" id="ringPct">--</div>
+      </div>
     </div>
 
     <div class="h1-sub">Smart Commerce Platform</div>
     <h1>ShopMaster</h1>
-
-    <p class="subtitle">
-      POS, Inventory & Business Management built for modern businesses in Bangladesh. Launching tonight.
-    </p>
-
-    <div class="divider"></div>
+    <p class="subtitle">POS, Inventory & Business Management built for modern businesses in Bangladesh. Launching tonight at 9:30 PM.</p>
 
     <div class="countdown">
-      <div class="t-box">
-        <span class="t-num" id="hours">00</span>
-        <span class="t-lbl">Hours</span>
-      </div>
-      <div class="t-box">
-        <span class="t-num" id="minutes">00</span>
-        <span class="t-lbl">Minutes</span>
-      </div>
-      <div class="t-box">
-        <span class="t-num" id="seconds">00</span>
-        <span class="t-lbl">Seconds</span>
-      </div>
+      <div class="t-box"><span class="t-num" id="hours">00</span><span class="t-lbl">Hours</span></div>
+      <div class="t-box"><span class="t-num" id="minutes">00</span><span class="t-lbl">Minutes</span></div>
+      <div class="t-box"><span class="t-num" id="seconds">00</span><span class="t-lbl">Seconds</span></div>
     </div>
 
     <div class="status" id="statusText">Initializing commerce engine...</div>
 
+    <!-- FUN FACT -->
+    <div class="funfact" id="funfact">💡 Loading interesting fact...</div>
+
     <div class="info-row">
       <div class="info-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-        </svg>
-        Launching at 9:30 PM
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        9:30 PM Tonight
       </div>
       <div class="info-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-        </svg>
-        Secure Cloud Access
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Secure Access
       </div>
       <div class="info-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Live Dashboard
       </div>
     </div>
 
-    <div class="footer-txt">© 2026 ShopMaster Bangladesh. All rights reserved.</div>
+    <div class="footer-txt">© 2026 ShopMaster Bangladesh · All rights reserved.</div>
 
   </div>
 
   <!-- AFTER LAUNCH -->
   <div id="afterLaunch">
-
     <span class="launch-emoji">🎉</span>
-
     <div class="launch-headline">We're Live!</div>
-
-    <p class="launch-sub">
-      ShopMaster is now live. Your launch credentials are ready — copy them below and access your dashboard.
-    </p>
-
+    <p class="launch-sub">ShopMaster is now live. Copy your credentials below and enter your dashboard.</p>
     <div class="cred-box">
-
       <div class="cred-row">
-        <div class="cred-info">
-          <div class="cred-lbl">Shop ID</div>
-          <div class="cred-val" id="shopid">S-313</div>
-        </div>
+        <div class="cred-info"><div class="cred-lbl">Shop ID</div><div class="cred-val" id="shopid">S-313</div></div>
         <button class="copy-btn" onclick="copyText('shopid',this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-          </svg>
-          Copy
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy
         </button>
       </div>
-
       <div class="cred-row">
-        <div class="cred-info">
-          <div class="cred-lbl">Mobile Number</div>
-          <div class="cred-val" id="phone">01900000000</div>
-        </div>
+        <div class="cred-info"><div class="cred-lbl">Mobile Number</div><div class="cred-val" id="phone">01900000000</div></div>
         <button class="copy-btn" onclick="copyText('phone',this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-          </svg>
-          Copy
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy
         </button>
       </div>
-
       <div class="cred-row">
-        <div class="cred-info">
-          <div class="cred-lbl">Password</div>
-          <div class="cred-val" id="password">123456</div>
-        </div>
+        <div class="cred-info"><div class="cred-lbl">Password</div><div class="cred-val" id="password">123456</div></div>
         <button class="copy-btn" onclick="copyText('password',this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-          </svg>
-          Copy
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy
         </button>
       </div>
-
     </div>
-
     <button class="enter-btn" onclick="enterApp()">
       Enter ShopMaster
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </button>
-
-    <div class="footer-txt" style="margin-top:24px;">© 2026 ShopMaster Bangladesh. All rights reserved.</div>
-
+    <div class="footer-txt" style="margin-top:22px;">© 2026 ShopMaster Bangladesh · All rights reserved.</div>
   </div>
 
 </div>
 </div>
 
 <script>
-particlesJS("particles-js",{
-  particles:{
-    number:{value:55},
-    color:{value:["#c77dff","#e8b86d","#6060cc"]},
-    shape:{type:"circle"},
-    opacity:{value:.35,random:true},
-    size:{value:2.5,random:true},
-    line_linked:{enable:true,distance:140,color:"#4a3880",opacity:.18,width:1},
-    move:{enable:true,speed:1.4,random:true}
+// ============ ANIMATED BG CANVAS ============
+const canvas=document.getElementById("bgCanvas");
+const ctx=canvas.getContext("2d");
+let W,H,nodes=[];
+
+function resize(){
+  W=canvas.width=window.innerWidth;
+  H=canvas.height=window.innerHeight;
+}
+resize();
+window.addEventListener("resize",()=>{resize();initNodes();});
+
+function initNodes(){
+  nodes=[];
+  const count=Math.floor((W*H)/14000);
+  for(let i=0;i<count;i++){
+    nodes.push({
+      x:Math.random()*W,y:Math.random()*H,
+      vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,
+      r:Math.random()*2+1,
+      color:Math.random()>.5?`rgba(199,125,255,`:`rgba(232,184,109,`,
+      pulse:Math.random()*Math.PI*2
+    });
   }
+}
+initNodes();
+
+let t=0;
+function draw(){
+  ctx.clearRect(0,0,W,H);
+
+  // deep gradient bg
+  const bg=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*.8);
+  bg.addColorStop(0,"rgba(25,10,55,.98)");
+  bg.addColorStop(.5,"rgba(12,7,28,.99)");
+  bg.addColorStop(1,"rgba(7,5,14,1)");
+  ctx.fillStyle=bg;
+  ctx.fillRect(0,0,W,H);
+
+  // moving aurora blobs
+  const blobs=[
+    {x:W*.15+Math.sin(t*.0007)*120,y:H*.2+Math.cos(t*.0005)*80,r:400,c:"rgba(199,125,255,.07)"},
+    {x:W*.8+Math.cos(t*.0006)*100,y:H*.7+Math.sin(t*.0008)*90,r:380,c:"rgba(232,184,109,.06)"},
+    {x:W*.5+Math.sin(t*.0004)*80,y:H*.5+Math.cos(t*.0009)*60,r:300,c:"rgba(80,60,200,.08)"},
+  ];
+  blobs.forEach(b=>{
+    const g=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+    g.addColorStop(0,b.c);
+    g.addColorStop(1,"transparent");
+    ctx.fillStyle=g;
+    ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();
+  });
+
+  // grid
+  ctx.strokeStyle="rgba(255,255,255,.018)";
+  ctx.lineWidth=1;
+  const gs=70;
+  for(let x=0;x<W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // nodes + connections
+  t++;
+  nodes.forEach(n=>{
+    n.x+=n.vx; n.y+=n.vy;
+    if(n.x<0||n.x>W) n.vx*=-1;
+    if(n.y<0||n.y>H) n.vy*=-1;
+    n.pulse+=.02;
+    const alpha=.3+Math.sin(n.pulse)*.2;
+    ctx.beginPath();
+    ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+    ctx.fillStyle=n.color+alpha+")";
+    ctx.fill();
+  });
+
+  // draw connections
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<130){
+        const alpha=(1-dist/130)*.12;
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x,nodes[i].y);
+        ctx.lineTo(nodes[j].x,nodes[j].y);
+        ctx.strokeStyle=`rgba(180,140,255,${alpha})`;
+        ctx.lineWidth=.8;
+        ctx.stroke();
+      }
+    }
+  }
+
+  // horizontal light streak
+  const streakY=H*.5+Math.sin(t*.003)*H*.3;
+  const sg=ctx.createLinearGradient(0,streakY,W,streakY);
+  sg.addColorStop(0,"transparent");
+  sg.addColorStop(.3,`rgba(199,125,255,${.04+Math.sin(t*.01)*.02})`);
+  sg.addColorStop(.7,`rgba(232,184,109,${.03+Math.sin(t*.008)*.02})`);
+  sg.addColorStop(1,"transparent");
+  ctx.fillStyle=sg;
+  ctx.fillRect(0,streakY-1,W,2);
+
+  requestAnimationFrame(draw);
+}
+draw();
+
+// ============ FLOATING ICONS ============
+const icons=["🛒","📦","💳","🏪","🧾","📊","💰","🔖","📱","⚡"];
+function spawnIcon(){
+  const el=document.createElement("div");
+  el.className="float-icon";
+  el.innerText=icons[Math.floor(Math.random()*icons.length)];
+  el.style.left=Math.random()*95+"%";
+  el.style.bottom="-40px";
+  const dur=7+Math.random()*8;
+  el.style.animationDuration=dur+"s";
+  el.style.animationDelay="0s";
+  el.style.fontSize=(16+Math.random()*14)+"px";
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),(dur+1)*1000);
+}
+setInterval(spawnIcon,1200);
+
+// ============ TICKER ============
+const tickerItems=[
+  {icon:"🚀",text:"ShopMaster launching at",val:"9:30 PM tonight"},
+  {icon:"🏪",text:"Built for",val:"Bangladesh businesses"},
+  {icon:"📊",text:"Features:",val:"POS · Inventory · Reports"},
+  {icon:"🔐",text:"Shop ID:",val:"S-313"},
+  {icon:"☁️",text:"Platform:",val:"Secure Cloud"},
+  {icon:"📱",text:"Works on",val:"Mobile & Desktop"},
+  {icon:"⚡",text:"Speed:",val:"Real-time sync"},
+  {icon:"🎯",text:"Version:",val:"ShopMaster v1.0"},
+];
+const track=document.getElementById("tickerTrack");
+const doubled=[...tickerItems,...tickerItems];
+doubled.forEach(item=>{
+  const div=document.createElement("div");
+  div.className="ticker-item";
+  div.innerHTML=`${item.icon} ${item.text} <span>${item.val}</span>`;
+  track.appendChild(div);
 });
 
-const statuses=[
-  "Initializing commerce engine...",
-  "Syncing merchant network...",
-  "Loading inventory modules...",
-  "Verifying secure access...",
-  "Preparing POS interface...",
-  "Final pre-launch checks..."
+// ============ FUN FACTS ============
+const facts=[
+  "💡 Bangladesh's retail market is growing at <strong>10%+ per year</strong> — ShopMaster is built to scale with you.",
+  "📦 ShopMaster can track <strong>unlimited products</strong> across multiple categories in real time.",
+  "💳 Integrated POS means <strong>faster checkout</strong> — serve more customers, earn more revenue.",
+  "📊 Get daily, weekly & monthly <strong>sales reports</strong> automatically — no manual work needed.",
+  "🛒 Smart inventory alerts notify you <strong>before stock runs out</strong> — never miss a sale.",
+  "🔐 All data is <strong>encrypted & backed up</strong> to the cloud every hour.",
+  "⚡ ShopMaster dashboard loads in <strong>under 2 seconds</strong> on any device.",
+  "🌐 Works perfectly on <strong>mobile, tablet & desktop</strong> — manage from anywhere.",
 ];
+let factIdx=0;
+const factEl=document.getElementById("funfact");
+function nextFact(){
+  factEl.style.opacity="0";
+  setTimeout(()=>{
+    factEl.innerHTML=facts[factIdx];
+    factEl.style.opacity="1";
+    factIdx=(factIdx+1)%facts.length;
+  },400);
+}
+nextFact();
+setInterval(nextFact,4000);
+
+// ============ STATUS ============
+const statuses=["Initializing commerce engine...","Syncing merchant network...","Loading inventory modules...","Verifying secure access...","Preparing POS interface...","Final pre-launch checks..."];
 let si=0;
 setInterval(()=>{
   document.getElementById("statusText").innerText=statuses[si];
   si=(si+1)%statuses.length;
 },2800);
 
-// Launch time: 9:30 PM today
+// ============ LAUNCH TIME ============
 const launchDate=new Date();
 launchDate.setHours(21,30,0,0);
+
+const totalDuration=3*60*60*1000; // treat max 3hr window for ring
 
 const beforeLaunch=document.getElementById("beforeLaunch");
 const afterLaunch=document.getElementById("afterLaunch");
@@ -610,17 +612,19 @@ function flipNum(id,val){
   const el=document.getElementById(id);
   const newVal=pad(val);
   if(el.innerText!==newVal){
-    el.style.transform="translateY(-8px)";
-    el.style.opacity="0";
     el.style.transition="transform .12s ease,opacity .12s ease";
+    el.style.transform="translateY(-8px)";el.style.opacity="0";
     setTimeout(()=>{
       el.innerText=newVal;
       el.style.transition="transform .18s cubic-bezier(.34,1.56,.64,1),opacity .18s ease";
-      el.style.transform="translateY(0)";
-      el.style.opacity="1";
+      el.style.transform="translateY(0)";el.style.opacity="1";
     },130);
   }
 }
+
+const ringEl=document.getElementById("ringCircle");
+const ringPct=document.getElementById("ringPct");
+const circumference=565;
 
 const timer=setInterval(()=>{
   const dist=launchDate.getTime()-Date.now();
@@ -628,40 +632,41 @@ const timer=setInterval(()=>{
     clearInterval(timer);
     beforeLaunch.style.display="none";
     afterLaunch.style.display="block";
-    fire();
-    return;
+    fire();return;
   }
   const h=Math.floor((dist%(864e5))/(36e5));
   const m=Math.floor((dist%(36e5))/(6e4));
   const s=Math.floor((dist%6e4)/1e3);
-  flipNum("hours",h);
-  flipNum("minutes",m);
-  flipNum("seconds",s);
+  flipNum("hours",h);flipNum("minutes",m);flipNum("seconds",s);
+
+  // ring progress
+  const elapsed=Math.max(0,totalDuration-dist);
+  const progress=Math.min(elapsed/totalDuration,1);
+  ringEl.style.strokeDashoffset=circumference*(1-progress);
+  const pctVal=Math.round(progress*100);
+  ringPct.innerText=pctVal+"%";
 },1000);
 
+// ============ CONFETTI ============
 function fire(){
-  confetti({particleCount:280,spread:160,origin:{y:.6},colors:["#e8b86d","#c77dff","#ffffff","#8ab4f8"]});
+  confetti({particleCount:300,spread:160,origin:{y:.6},colors:["#e8b86d","#c77dff","#ffffff","#8ab4f8"]});
   setTimeout(()=>{
-    confetti({particleCount:140,angle:60,spread:100,origin:{x:0},colors:["#e8b86d","#c77dff"]});
-    confetti({particleCount:140,angle:120,spread:100,origin:{x:1},colors:["#e8b86d","#c77dff"]});
+    confetti({particleCount:150,angle:60,spread:100,origin:{x:0},colors:["#e8b86d","#c77dff"]});
+    confetti({particleCount:150,angle:120,spread:100,origin:{x:1},colors:["#e8b86d","#c77dff"]});
   },500);
-  setTimeout(()=>{
-    confetti({particleCount:80,spread:120,origin:{y:.3},scalar:.6,colors:["#e8b86d","#f5d08a"]});
-  },1000);
+  setTimeout(()=>{confetti({particleCount:80,spread:120,origin:{y:.3},scalar:.6,colors:["#e8b86d","#f5d08a"]});},1000);
 }
 
+// ============ COPY ============
 function copyText(id,btn){
-  const text=document.getElementById(id).innerText;
-  navigator.clipboard.writeText(text).catch(()=>{});
+  navigator.clipboard.writeText(document.getElementById(id).innerText).catch(()=>{});
   const orig=btn.innerHTML;
-  btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;stroke:currentColor"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+  btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;stroke:currentColor"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
   btn.style.background="linear-gradient(135deg,#22c55e,#16a34a)";
   setTimeout(()=>{btn.innerHTML=orig;btn.style.background="";},1800);
 }
 
-function enterApp(){
-  window.location.href="https://shopmaster-owner.onrender.com/";
-}
+function enterApp(){window.location.href="https://shopmaster-owner.onrender.com/";}
 </script>
 </body>
 </html>
