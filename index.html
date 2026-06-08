@@ -3,670 +3,651 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ShopMaster — Launching Tonight</title>
+<title>ShopMaster Pro — Business Management Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#07050e;
-  --surface:rgba(255,255,255,.05);
-  --surface2:rgba(255,255,255,.08);
-  --border:rgba(255,255,255,.07);
-  --border2:rgba(255,255,255,.14);
-  --text:#f0eeff;
-  --muted:#8a87a8;
-  --gold1:#e8b86d;
-  --gold2:#f5d08a;
-  --pur:#c77dff;
-  --grad:linear-gradient(135deg,#e8b86d,#c77dff);
+  --bg:#08090c;--s1:#0f1015;--s2:#16171d;--s3:#1e1f26;
+  --b0:rgba(255,255,255,0.04);--b1:rgba(255,255,255,0.08);--b2:rgba(255,255,255,0.14);
+  --gr:#22c55e;--gr2:rgba(34,197,94,0.12);--gr3:rgba(34,197,94,0.22);--gr4:rgba(34,197,94,0.06);
+  --t1:#f4f5f7;--t2:#9ca3af;--t3:#4b5563;
+  --serif:'Fraunces',Georgia,serif;--sans:'DM Sans',sans-serif;
+  --rad:8px;--rad2:12px;--rad3:18px;
 }
-
-body{
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  padding:20px;
-  position:relative;
-}
-
-/* ========= CANVAS BG ========= */
-#bgCanvas{
-  position:fixed;
-  inset:0;
-  z-index:0;
-  pointer-events:none;
-}
-
-/* ========= FLOATING ICONS ========= */
-.float-icon{
-  position:fixed;
-  z-index:1;
-  pointer-events:none;
-  opacity:0;
-  animation:floatUp linear infinite;
-  font-size:22px;
-  filter:blur(0px);
-  user-select:none;
-}
-@keyframes floatUp{
-  0%{transform:translateY(0) rotate(0deg) scale(1);opacity:0;}
-  10%{opacity:.55;}
-  80%{opacity:.35;}
-  100%{transform:translateY(-100vh) rotate(360deg) scale(.6);opacity:0;}
-}
-
-/* ========= SCANLINE ========= */
-.scanline{
-  position:fixed;
-  top:0;left:0;right:0;
-  height:3px;
-  background:linear-gradient(90deg,transparent,rgba(199,125,255,.5),rgba(232,184,109,.5),transparent);
-  z-index:1;
-  animation:scan 5s linear infinite;
-  pointer-events:none;
-}
-@keyframes scan{from{top:-4px;}to{top:100vh;}}
-
-/* ========= TICKER ========= */
-.ticker-wrap{
-  position:fixed;
-  bottom:0;left:0;right:0;
-  z-index:3;
-  background:rgba(0,0,0,.7);
-  border-top:1px solid rgba(255,255,255,.1);
-  backdrop-filter:blur(16px);
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-}
-.ticker-label{
-  width:100%;
-  background:linear-gradient(135deg,#e8b86d,#c77dff);
-  color:#0d0a1a;
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:.2em;
-  text-transform:uppercase;
-  padding:6px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  white-space:nowrap;
-  box-shadow:0 0 24px rgba(232,184,109,.5),0 0 48px rgba(199,125,255,.3);
-}
-.live-dot{
-  width:8px;height:8px;border-radius:50%;
-  background:#0d0a1a;
-  animation:livepulse 1s infinite;
-  flex-shrink:0;
-}
-@keyframes livepulse{
-  0%,100%{transform:scale(1);opacity:1;}
-  50%{transform:scale(1.7);opacity:.4;}
-}
-.ticker-track{
-  display:flex;
-  white-space:nowrap;
-  animation:tickerScroll 30s linear infinite;
-}
-@keyframes tickerScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}</p>
-.ticker-item{
-  font-size:12.5px;
-  color:var(--muted);
-  padding:0 28px;
-  border-right:1px solid rgba(255,255,255,.07);
-  display:flex;align-items:center;gap:8px;
-}
-.ticker-item span{color:var(--gold2);font-weight:600;}
-
-/* ========= COUNTDOWN RING ========= */
-.ring-wrap{
-  position:relative;
-  width:200px;
-  height:200px;
-  margin:0 auto 32px;
-}
-.ring-wrap svg{position:absolute;inset:0;width:100%;height:100%;}
-#ringCircle{
-  stroke-dasharray:565;
-  stroke-dashoffset:0;
-  transition:stroke-dashoffset 1s linear;
-  transform-origin:center;
-  transform:rotate(-90deg);
-}
-
-/* ========= MAIN CARD ========= */
-.wrap{position:relative;z-index:2;width:100%;max-width:700px;}
-
-.card{
-  background:rgba(12,9,28,.75);
-  border:1px solid var(--border);
-  border-radius:32px;
-  padding:52px 48px 44px;
-  text-align:center;
-  position:relative;
-  overflow:hidden;
-  backdrop-filter:blur(40px);
-  box-shadow:0 0 0 1px rgba(255,255,255,.04) inset,0 40px 100px rgba(0,0,0,.6);
-  margin-bottom:44px;
-}
-.card::after{
-  content:'';
-  position:absolute;
-  top:0;left:0;right:0;
-  height:2px;
-  background:var(--grad);
-  border-radius:32px 32px 0 0;
-}
-
-/* shimmer sweep */
-.card::before{
-  content:'';
-  position:absolute;
-  top:0;left:-100%;width:60%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);
-  animation:shimmer 6s infinite;
-  pointer-events:none;
-}
-@keyframes shimmer{0%{left:-100%;}100%{left:200%;}}
-
-.pill{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:8px 18px;border-radius:999px;
-  border:1px solid rgba(232,184,109,.25);
-  background:rgba(232,184,109,.07);
-  color:var(--gold2);
-  font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;
-  margin-bottom:28px;
-}
-.pill-dot{width:6px;height:6px;border-radius:50%;background:var(--gold1);animation:blink 1.8s infinite;}
-@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 6px var(--gold1);}50%{opacity:.3;box-shadow:none;}}
-
-/* logo inside ring */
-.logo-inner{
-  position:absolute;
-  inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:4px;
-}
-.logo-inner svg{width:38px;height:38px;}
-.logo-pct{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--gold2);opacity:.8;}
-
-h1{
-  font-family:'Syne',sans-serif;
-  font-size:68px;font-weight:800;letter-spacing:-3px;line-height:.95;
-  margin-bottom:6px;
-  background:var(--grad);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.h1-sub{font-size:12px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
-.subtitle{color:var(--muted);font-size:15px;line-height:1.85;max-width:460px;margin:0 auto 36px;}
-
-/* countdown boxes */
-.countdown{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
-.t-box{
-  min-width:130px;padding:24px 16px 18px;border-radius:22px;
-  background:rgba(0,0,0,.3);border:1px solid var(--border);
-  position:relative;overflow:hidden;flex:1;max-width:150px;
-}
-.t-box::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--grad);opacity:.5;}
-.t-num{
-  font-family:'Syne',sans-serif;font-size:52px;font-weight:700;line-height:1;
-  color:var(--text);display:block;
-}
-.t-lbl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:7px;display:block;}
-
-/* fun fact box */
-.funfact{
-  margin:0 0 28px;
-  padding:14px 18px;
-  border-radius:16px;
-  background:rgba(199,125,255,.06);
-  border:1px solid rgba(199,125,255,.12);
-  font-size:13.5px;
-  color:#c4b5f5;
-  line-height:1.7;
-  min-height:52px;
-  transition:opacity .4s;
-}
-.funfact strong{color:var(--gold2);}
-
-.status{color:rgba(199,125,255,.7);font-size:13px;min-height:20px;margin-bottom:24px;letter-spacing:.02em;}
-
-.info-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
-.info-chip{
-  display:flex;align-items:center;gap:7px;padding:9px 15px;
-  border-radius:14px;border:1px solid var(--border);background:var(--surface);
-  font-size:12.5px;color:var(--muted);
-}
-.info-chip svg{width:14px;height:14px;stroke:var(--gold1);flex-shrink:0;}
-
-.footer-txt{font-size:11.5px;color:#2e2b40;margin-top:28px;letter-spacing:.05em;}
-
-/* ========= AFTER LAUNCH ========= */
-#afterLaunch{display:none;animation:popIn .7s cubic-bezier(.34,1.56,.64,1);}
-@keyframes popIn{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
-.launch-emoji{font-size:76px;display:block;margin-bottom:18px;animation:bob 1.8s ease-in-out infinite;}
-@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-10px) rotate(3deg);}}
-.launch-headline{
-  font-family:'Syne',sans-serif;font-size:56px;font-weight:800;letter-spacing:-2px;line-height:1;
-  margin-bottom:12px;
-  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.launch-sub{color:var(--muted);font-size:15px;line-height:1.8;max-width:460px;margin:0 auto 32px;}
-.cred-box{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:22px;padding:8px;margin-bottom:18px;}
-.cred-row{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:14px 16px;border-radius:16px;background:var(--surface);margin-bottom:6px;flex-wrap:wrap;
-}
-.cred-row:last-child{margin-bottom:0;}
-.cred-info{text-align:left;}
-.cred-lbl{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
-.cred-val{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;}
-.copy-btn{
-  display:flex;align-items:center;gap:7px;padding:10px 17px;border:none;border-radius:12px;
-  background:var(--grad);color:#0d0a1a;font-size:13px;font-weight:700;cursor:pointer;
-  transition:transform .2s,opacity .2s;flex-shrink:0;font-family:'DM Sans',sans-serif;
-}
-.copy-btn:hover{transform:translateY(-2px);opacity:.9;}
-.copy-btn svg{width:13px;height:13px;stroke:currentColor;flex-shrink:0;}
-.enter-btn{
-  width:100%;padding:18px;border:none;border-radius:18px;background:var(--grad);
-  color:#0d0a1a;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.02em;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  transition:transform .25s,box-shadow .25s;font-family:'DM Sans',sans-serif;
-}
-.enter-btn:hover{transform:translateY(-3px);box-shadow:0 20px 50px rgba(232,184,109,.28);}
-.enter-btn svg{width:18px;height:18px;stroke:#0d0a1a;}
-
-@media(max-width:640px){
-  body{overflow-y:auto;overflow-x:hidden;align-items:flex-start;padding:12px;}
-  .card{padding:28px 16px 24px;border-radius:22px;margin-bottom:50px;}
-  h1{font-size:46px;letter-spacing:-2px;}
-  .launch-headline{font-size:38px;}
-  .t-box{min-width:80px;padding:18px 10px 14px;}
-  .t-num{font-size:34px;}
-  .ring-wrap{width:160px;height:160px;}
+html{scroll-behavior:smooth;font-size:15px;scroll-padding-top:72px}
+body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-weight:400;line-height:1.65;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:0.5}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:58px;background:rgba(8,9,12,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--b0)}
+.nav-w{max-width:1080px;margin:auto;padding:0 36px;height:100%;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--serif);font-size:19px;font-weight:500;color:var(--t1);letter-spacing:-0.2px;text-decoration:none}
+.logo b{color:var(--gr);font-weight:500}
+.nav-links{display:flex;gap:30px;list-style:none}
+.nav-links a{color:var(--t2);text-decoration:none;font-size:13.5px;font-weight:400;transition:color 0.15s}
+.nav-links a:hover{color:var(--t1)}
+.nav-cta{height:32px;padding:0 16px;background:var(--gr);color:#fff;border:none;border-radius:6px;font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;letter-spacing:0.15px;transition:all 0.15s;white-space:nowrap}
+.nav-cta:hover{background:#16a34a;transform:translateY(-1px)}
+.hero{min-height:100vh;display:flex;align-items:center;padding:110px 36px 80px;max-width:1080px;margin:auto;position:relative}
+.hero-orb{position:absolute;top:40%;left:55%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse at center,rgba(34,197,94,0.055) 0%,transparent 68%);pointer-events:none}
+.hero-content{max-width:580px;position:relative;z-index:1}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--gr2);border:1px solid rgba(34,197,94,0.18);color:var(--gr);padding:5px 14px;border-radius:100px;font-size:11.5px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:30px;opacity:0;animation:rise 0.6s 0.1s forwards}
+.eyebrow-dot{width:5px;height:5px;background:var(--gr);border-radius:50%;animation:pulse 2.2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.3;transform:scale(0.6)}}
+.hero h1{font-family:var(--serif);font-size:clamp(42px,5.8vw,70px);line-height:1.06;letter-spacing:-1.5px;margin-bottom:22px;font-weight:500;opacity:0;animation:rise 0.7s 0.22s forwards}
+.hero h1 i{font-style:italic;color:var(--gr);font-weight:400}
+.hero-lead{font-size:17px;color:var(--t2);line-height:1.75;max-width:460px;font-weight:300;margin-bottom:38px;opacity:0;animation:rise 0.7s 0.38s forwards}
+.hero-actions{display:flex;align-items:center;gap:13px;flex-wrap:wrap;opacity:0;animation:rise 0.7s 0.52s forwards}
+.btn-primary{height:46px;padding:0 24px;background:var(--gr);color:#fff;border:none;border-radius:var(--rad);font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;letter-spacing:0.1px}
+.btn-primary:hover{background:#16a34a;transform:translateY(-2px);box-shadow:0 10px 28px rgba(34,197,94,0.22)}
+.btn-ghost{height:46px;padding:0 20px;background:transparent;color:var(--t1);border:1px solid var(--b2);border-radius:var(--rad);font-family:var(--sans);font-size:14px;font-weight:400;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all 0.15s}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.22);background:var(--s2)}
+.hero-meta{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap;opacity:0;animation:rise 0.7s 0.66s forwards}
+.meta-pill{background:var(--s2);border:1px solid var(--b1);border-radius:var(--rad);padding:8px 14px;font-size:12.5px;color:var(--t2);display:flex;align-items:center;gap:6px}
+.meta-pill strong{color:var(--gr)}
+.meta-pill s{color:var(--t3);text-decoration:line-through}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.div-line{max-width:1080px;margin:0 auto;padding:0 36px;border-top:1px solid var(--b0)}
+.trust{max-width:1080px;margin:auto;padding:34px 36px}
+.trust-lbl{font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--t2);font-weight:600;margin-bottom:16px}
+.trust-tags{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.ttag{background:var(--s2);border:1px solid var(--b1);padding:7px 15px;border-radius:100px;font-size:12.5px;color:var(--t2);transition:all 0.15s;cursor:default;white-space:nowrap;flex-shrink:0}
+.ttag:hover{border-color:rgba(34,197,94,0.35);color:var(--t1)}
+.sec{max-width:1080px;margin:auto;padding:76px 36px}
+.sec-eye{font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gr);font-weight:600;margin-bottom:11px}
+.sec-h{font-family:var(--serif);font-size:clamp(30px,3.8vw,46px);letter-spacing:-0.8px;line-height:1.12;margin-bottom:14px;font-weight:500}
+.sec-sub{color:var(--t2);font-size:16px;font-weight:300;max-width:460px;margin-bottom:48px;line-height:1.7}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--b0);border:1px solid var(--b0);border-radius:var(--rad2);overflow:hidden}
+.feat{background:var(--s1);padding:28px 26px;transition:background 0.2s;position:relative;overflow:hidden}
+.feat::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gr),transparent);opacity:0;transition:opacity 0.3s}
+.feat:hover{background:var(--s2)}
+.feat:hover::after{opacity:0.5}
+.feat-ico{width:38px;height:38px;background:var(--gr2);border-radius:var(--rad);display:flex;align-items:center;justify-content:center;margin-bottom:15px}
+.feat-ico svg{width:18px;height:18px;stroke:var(--gr);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.feat h3{font-size:14px;font-weight:600;margin-bottom:5px;color:var(--t1);letter-spacing:-0.1px}
+.feat p{font-size:13px;color:var(--t2);line-height:1.6}
+.setup-strip{background:var(--s2);border:1px solid rgba(34,197,94,0.12);border-radius:var(--rad2);padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:10px;flex-wrap:wrap}
+.setup-l{display:flex;align-items:center;gap:14px}
+.setup-ico{width:40px;height:40px;background:var(--gr2);border:1px solid rgba(34,197,94,0.18);border-radius:var(--rad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.setup-ico svg{width:18px;height:18px;stroke:var(--gr);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.setup-label{font-size:14.5px;font-weight:600;margin-bottom:2px;color:var(--t1)}
+.setup-hint{font-size:12px;color:var(--t2)}
+.setup-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.setup-was{font-size:15px;color:var(--t3);text-decoration:line-through}
+.setup-price{font-family:var(--serif);font-size:34px;color:var(--gr);letter-spacing:-1px;line-height:1}
+.setup-tag{background:var(--gr2);color:var(--gr);font-size:10.5px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;padding:4px 10px;border-radius:5px}
+.info-bar{display:flex;align-items:flex-start;gap:9px;background:var(--s1);border:1px solid var(--b0);border-radius:var(--rad);padding:11px 14px;margin-bottom:26px}
+.info-bar svg{width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:2px}
+.info-bar p{font-size:12px;color:var(--t2);line-height:1.65}
+.info-bar strong{color:var(--t1);font-weight:500}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+@media(max-width:640px){.plans{grid-template-columns:1fr}}
+.plan{background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad2);padding:22px;display:flex;flex-direction:column;gap:16px;position:relative;transition:border-color 0.2s,transform 0.2s}
+.plan:hover{transform:translateY(-3px);border-color:rgba(34,197,94,0.18)}
+.plan--hot{background:var(--s2);border-color:rgba(34,197,94,0.25)}
+.hot-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--gr);color:#fff;font-size:10.5px;font-weight:700;padding:4px 13px;border-radius:100px;white-space:nowrap;letter-spacing:0.2px}
+.plan-hd{display:flex;align-items:center;gap:11px}
+.plan-ico{width:38px;height:38px;border-radius:var(--rad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.plan-ico svg{width:18px;height:18px;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ico-b{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.18)}
+.ico-b svg{stroke:#60a5fa}
+.ico-g{background:var(--gr2);border:1px solid rgba(34,197,94,0.2)}
+.ico-g svg{stroke:var(--gr)}
+.ico-a{background:rgba(234,179,8,0.09);border:1px solid rgba(234,179,8,0.18)}
+.ico-a svg{stroke:#eab308}
+.plan-name{font-size:14px;font-weight:600;color:var(--t1)}
+.plan-price{font-family:var(--serif);font-size:38px;letter-spacing:-1.5px;line-height:1;color:var(--t1);font-weight:500}
+.plan-price span{font-family:var(--sans);font-size:12.5px;color:var(--t2);font-weight:400;letter-spacing:0;margin-left:2px}
+.plan-reg{font-size:12px;color:var(--t2);display:flex;align-items:center;gap:5px}
+.plan-save{display:inline-flex;align-items:center;gap:4px;background:var(--gr4);color:var(--gr);font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:4px;border:1px solid rgba(34,197,94,0.15);width:fit-content}
+.plan-btn{height:38px;border-radius:var(--rad);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.15s;margin-top:auto;border:1px solid var(--b2);background:var(--s3);color:var(--t1);letter-spacing:0.1px}
+.plan-btn:hover{border-color:rgba(34,197,94,0.35);color:var(--gr)}
+.plan-btn--gr{background:var(--gr);border-color:var(--gr);color:#fff}
+.plan-btn--gr:hover{background:#16a34a;border-color:#16a34a;box-shadow:0 6px 18px rgba(34,197,94,0.2)}
+.perks-row{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;padding:16px;background:var(--s1);border:1px solid var(--b0);border-radius:var(--rad2)}
+.perk{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--t2);padding:0 10px}
+.perk svg{width:14px;height:14px;stroke:var(--gr);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.refund-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad2);overflow:hidden}
+.refund-hd{padding:22px 26px;border-bottom:1px solid var(--b0);display:flex;align-items:center;gap:12px}
+.refund-hd-ico{width:36px;height:36px;background:rgba(234,179,8,0.09);border:1px solid rgba(234,179,8,0.15);border-radius:var(--rad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.refund-hd-ico svg{width:17px;height:17px;stroke:#eab308;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.refund-hd h3{font-family:var(--serif);font-size:19px;letter-spacing:-0.2px;font-weight:500}
+.refund-hd p{font-size:12px;color:var(--t2);margin-top:2px}
+.refund-cols{display:grid;grid-template-columns:repeat(3,1fr)}
+@media(max-width:580px){.refund-cols{grid-template-columns:1fr}}
+.refund-col{padding:20px 22px;border-right:1px solid var(--b0)}
+.refund-col:last-child{border-right:none}
+.rc-lbl{font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:var(--t3);font-weight:600;margin-bottom:8px}
+.rc-period{font-family:var(--serif);font-size:17px;margin-bottom:8px;font-weight:400}
+.rbadge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:100px}
+.rb-g{background:rgba(34,197,94,0.09);color:#22c55e}
+.rb-y{background:rgba(234,179,8,0.09);color:#eab308}
+.rb-r{background:rgba(239,68,68,0.09);color:#f87171}
+.refund-ft{padding:14px 22px;border-top:1px solid var(--b0);background:rgba(0,0,0,0.18);display:flex;align-items:center;gap:9px}
+.refund-ft svg{width:13px;height:13px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.refund-ft p{font-size:12px;color:var(--t2);line-height:1.6}
+.refund-ft strong{color:var(--t1);font-weight:500}
+.faq-list{display:flex;flex-direction:column;gap:7px;max-width:620px}
+.fq{background:var(--s1);border:1px solid var(--b0);border-radius:var(--rad2);overflow:hidden;transition:border-color 0.2s}
+.fq.open{border-color:rgba(34,197,94,0.18)}
+.fq-trigger{width:100%;background:none;border:none;color:var(--t1);font-family:var(--sans);font-size:14px;font-weight:500;text-align:left;padding:17px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;transition:color 0.15s}
+.fq.open .fq-trigger{color:var(--t1)}
+.fq-ico{width:20px;height:20px;border:1px solid var(--b2);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--t2);font-size:13px;font-weight:400;transition:all 0.2s;line-height:1}
+.fq.open .fq-ico{background:var(--gr2);border-color:rgba(34,197,94,0.28);color:var(--gr);transform:rotate(45deg)}
+.fq-ans{display:none;padding:0 20px 16px;font-size:13px;color:var(--t2);line-height:1.7}
+.fq.open .fq-ans{display:block}
+.reg-grid{display:grid;grid-template-columns:1fr 1.55fr;gap:44px;align-items:start}
+@media(max-width:700px){.reg-grid{grid-template-columns:1fr}}
+.reg-info{position:sticky;top:76px;z-index:1}
+.reg-info h3{font-family:var(--serif);font-size:25px;letter-spacing:-0.4px;line-height:1.3;margin-bottom:10px;font-weight:500}
+.reg-info p{font-size:14px;color:var(--t2);font-weight:300;line-height:1.75;margin-bottom:24px}
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:flex-start;gap:12px}
+.step-num{width:25px;height:25px;border-radius:50%;background:var(--gr2);border:1px solid rgba(34,197,94,0.22);color:var(--gr);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-txt strong{display:block;font-size:13px;font-weight:600;margin-bottom:1px}
+.step-txt span{font-size:12px;color:var(--t2)}
+.reg-form{background:#000;border:1px solid var(--b1);border-radius:var(--rad2);padding:28px 26px;position:relative;z-index:2;isolation:isolate}
+.form-hd{display:flex;align-items:center;gap:10px;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--b0)}
+.form-hd-ico{width:34px;height:34px;background:var(--gr2);border:1px solid rgba(34,197,94,0.18);border-radius:var(--rad);display:flex;align-items:center;justify-content:center;font-size:15px}
+.form-hd h4{font-family:var(--serif);font-size:17px;letter-spacing:-0.2px;font-weight:500}
+.form-hd p{font-size:11.5px;color:var(--t2);margin-top:1px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+@media(max-width:480px){.fg{grid-template-columns:1fr}}
+.f{display:flex;flex-direction:column;gap:5px}
+.f.full{grid-column:1/-1}
+.f label{font-size:11px;font-weight:600;color:#6b7280;letter-spacing:0.5px;text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.req{color:var(--gr)}
+.opt-tag{background:var(--s2);color:var(--t3);font-size:9.5px;font-weight:500;padding:2px 6px;border-radius:3px;text-transform:none;letter-spacing:0}
+.f input,.f select,.f textarea{background:var(--s2);border:1px solid var(--b1);border-radius:var(--rad);color:var(--t1);font-family:var(--sans);font-size:13px;padding:10px 12px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;width:100%;appearance:none;-webkit-appearance:none}
+.f select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
+.f input::placeholder,.f textarea::placeholder{color:#374151}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:rgba(34,197,94,0.4);box-shadow:0 0 0 3px rgba(34,197,94,0.07)}
+.f textarea{resize:vertical;min-height:62px}
+.f-sec-label{grid-column:1/-1;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);font-weight:600;display:flex;align-items:center;gap:8px;margin-top:2px}
+.f-sec-label::after{content:'';flex:1;height:1px;background:var(--b0)}
+.sub-btn{width:100%;height:46px;background:var(--gr);color:#fff;border:none;border-radius:var(--rad);font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:all 0.18s;letter-spacing:0.1px}
+.sub-btn:hover{background:#16a34a;transform:translateY(-1px);box-shadow:0 8px 22px rgba(34,197,94,0.22)}
+.sub-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+.f-note{grid-column:1/-1;text-align:center;font-size:11.5px;color:var(--t3);line-height:1.6;margin-top:2px}
+.f-submit{grid-column:1/-1;margin-top:6px}
+.success{display:none;flex-direction:column;align-items:center;text-align:center;padding:44px 20px;gap:13px}
+.success.show{display:flex}
+.success-ico{width:56px;height:56px;background:var(--gr2);border:1px solid rgba(34,197,94,0.22);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.success-ico svg{width:24px;height:24px;stroke:var(--gr);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.success h4{font-family:var(--serif);font-size:19px;letter-spacing:-0.2px;font-weight:500}
+.success p{font-size:13px;color:var(--t2);max-width:290px;line-height:1.7}
+.success-wa-btn{display:inline-flex;align-items:center;gap:8px;background:#25d366;color:#fff;border:none;border-radius:var(--rad);padding:10px 20px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all 0.15s;margin-top:4px}
+.success-wa-btn:hover{background:#1ebe5b;transform:translateY(-1px)}
+.cta-wrap{max-width:1080px;margin:0 auto 68px;padding:0 36px}
+.cta-blk{background:var(--s2);border:1px solid rgba(34,197,94,0.1);border-radius:20px;padding:56px 52px;display:flex;align-items:center;justify-content:space-between;gap:36px;position:relative;overflow:hidden}
+.cta-blk::before{content:'';position:absolute;top:-80px;right:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(34,197,94,0.07) 0%,transparent 70%);pointer-events:none}
+.cta-blk h2{font-family:var(--serif);font-size:clamp(24px,3.2vw,38px);letter-spacing:-0.7px;line-height:1.2;margin-bottom:8px;font-weight:500}
+.cta-blk p{font-size:15px;color:var(--t2);font-weight:300}
+.cta-acts{display:flex;flex-direction:column;gap:10px;flex-shrink:0}
+@media(max-width:620px){.cta-blk{flex-direction:column;padding:36px 26px;text-align:center}.cta-acts{width:100%}.cta-acts .btn-primary,.cta-acts .btn-ghost{width:100%;justify-content:center}}
+footer{border-top:1px solid var(--b0);padding:22px 36px;max-width:1080px;margin:auto;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--t3);flex-wrap:wrap;gap:8px}
+[data-r]{opacity:0;transform:translateY(20px);transition:opacity 0.65s ease,transform 0.65s ease}
+[data-r].in{opacity:1;transform:none}
+[data-r][data-d="1"]{transition-delay:0.1s}
+[data-r][data-d="2"]{transition-delay:0.2s}
+[data-r][data-d="3"]{transition-delay:0.3s}
+[data-r][data-d="4"]{transition-delay:0.4s}
+@media(max-width:600px){
+  nav .nav-links{display:none}
+  .hero{padding:95px 20px 55px}
+  .sec{padding:56px 20px}
+  .trust,.div-line{padding-left:20px;padding-right:20px}
+  .cta-wrap{padding:0 20px}
+  footer{padding:20px}
+  .setup-strip{flex-direction:column;align-items:flex-start}
+  .reg-form{padding:20px}
 }
 </style>
 </head>
 <body>
 
-<canvas id="bgCanvas"></canvas>
-<div class="scanline"></div>
+<nav>
+  <div class="nav-w">
+    <a class="logo" href="#">Shop<b>Master</b> Pro</a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#register">Register</a></li>
+    </ul>
+    <button class="nav-cta" onclick="document.getElementById('register').scrollIntoView({behavior:'smooth'})">Get Started →</button>
+  </div>
+</nav>
 
-<!-- TICKER -->
-<div class="ticker-wrap">
-  <div class="ticker-label"><div class="live-dot"></div>🔴 &nbsp;LIVE &nbsp;— &nbsp;ShopMaster Launching Tonight</div>
-  <div style="overflow:hidden;height:38px;display:flex;align-items:center;">
-    <div class="ticker-track" id="tickerTrack"></div>
+<section>
+  <div class="hero">
+    <div class="hero-orb"></div>
+    <div class="hero-content">
+      <div class="eyebrow"><span class="eyebrow-dot"></span>Limited offer — 50% off setup</div>
+      <h1>Run your business<br><i>with clarity.</i></h1>
+      <p class="hero-lead">ShopMaster Pro brings inventory, orders, customers, and expenses under one roof — so you can focus on growing, not managing.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('register').scrollIntoView({behavior:'smooth'})">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
+          Get Started Now
+        </button>
+
+        <button class="btn-ghost"onclick="window.open('https://wa.me/8801915647290','_blank')">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" style="color:#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+          WhatsApp Us
+        </button>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-pill">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          Setup: <s>৳799</s> → <strong>৳599</strong>
+        </div>
+        <div class="meta-pill">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gr)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+          Includes <strong>1 month free</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="div-line"></div>
+<div class="trust" data-r>
+  <div class="trust-lbl">Trusted by growing businesses</div>
+  <div class="trust-tags">
+    <span class="ttag">Retail Stores</span>
+    <span class="ttag">Grocery Shops</span>
+    <span class="ttag">Fashion Businesses</span>
+    <span class="ttag">Electronics Stores</span>
+    <span class="ttag">Online Sellers</span>
+  </div>
+</div>
+<div class="div-line"></div>
+
+<div class="sec" id="features">
+  <div data-r>
+    <div class="sec-eye">Platform Features</div>
+    <h2 class="sec-h">Everything you need<br>to run the business</h2>
+    <p class="sec-sub">Purpose-built tools for Bangladeshi retailers and growing businesses of all sizes.</p>
+  </div>
+  <div class="feat-grid">
+    <div class="feat" data-r data-d="1">
+      <div class="feat-ico"><svg viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></div>
+      <h3>Product Management</h3>
+      <p>Add, organise, and update your entire product catalogue in seconds.</p>
+    </div>
+    <div class="feat" data-r data-d="2">
+      <div class="feat-ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+      <h3>Order Management</h3>
+      <p>Track every customer order from placement to delivery in real time.</p>
+    </div>
+    <div class="feat" data-r data-d="3">
+      <div class="feat-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <h3>Customer Management</h3>
+      <p>Maintain complete customer profiles, history, and contact details.</p>
+    </div>
+    <div class="feat" data-r data-d="4">
+      <div class="feat-ico"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+      <h3>Expense Tracking</h3>
+      <p>Monitor all your business expenses and spot savings opportunities.</p>
+    </div>
   </div>
 </div>
 
-<div class="wrap">
-<div class="card">
-
-  <!-- BEFORE LAUNCH -->
-  <div id="beforeLaunch">
-
-    <div class="pill"><div class="pill-dot"></div>Official Product Launch — Bangladesh</div>
-
-    <!-- RING COUNTDOWN -->
-    <div class="ring-wrap">
-      <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#e8b86d"/>
-            <stop offset="100%" stop-color="#c77dff"/>
-          </linearGradient>
-        </defs>
-        <circle cx="100" cy="100" r="90" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
-        <circle id="ringCircle" cx="100" cy="100" r="90"
-          stroke="url(#ringGrad)" stroke-width="8"
-          stroke-linecap="round" fill="none"/>
-      </svg>
-      <div class="logo-inner">
-        <svg viewBox="0 0 44 44" fill="none">
-          <rect x="4" y="10" width="36" height="28" rx="5" stroke="url(#lg)" stroke-width="2.5" stroke-linejoin="round"/>
-          <path d="M4 18h36" stroke="url(#lg)" stroke-width="2.5"/>
-          <path d="M14 14v-4M30 14v-4" stroke="url(#lg)" stroke-width="2.5" stroke-linecap="round"/>
-          <circle cx="15" cy="27" r="3" stroke="url(#lg2)" stroke-width="2"/>
-          <path d="M22 25h7M22 29h5" stroke="url(#lg2)" stroke-width="2" stroke-linecap="round"/>
-          <defs>
-            <linearGradient id="lg" x1="4" y1="10" x2="40" y2="38" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#e8b86d"/><stop offset="1" stop-color="#c77dff"/>
-            </linearGradient>
-            <linearGradient id="lg2" x1="12" y1="24" x2="30" y2="32" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#e8b86d"/><stop offset="1" stop-color="#c77dff"/>
-            </linearGradient>
-          </defs>
-        </svg>
-        <div class="logo-pct" id="ringPct">--</div>
-      </div>
-    </div>
-
-    <div class="h1-sub">Smart Commerce Platform</div>
-    <h1>ShopMaster</h1>
-    <p class="subtitle">POS, Inventory & Business Management built for modern businesses in Bangladesh. Launching tonight at 9:30 PM.</p>
-
-    <div class="countdown">
-      <div class="t-box"><span class="t-num" id="hours">00</span><span class="t-lbl">Hours</span></div>
-      <div class="t-box"><span class="t-num" id="minutes">00</span><span class="t-lbl">Minutes</span></div>
-      <div class="t-box"><span class="t-num" id="seconds">00</span><span class="t-lbl">Seconds</span></div>
-    </div>
-
-    <div class="status" id="statusText">Initializing commerce engine...</div>
-
-    <!-- FUN FACT -->
-    <div class="funfact" id="funfact">💡 Loading interesting fact...</div>
-
-    <div class="info-row">
-      <div class="info-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        9:30 PM Tonight
-      </div>
-      <div class="info-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        Secure Access
-      </div>
-      <div class="info-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Live Dashboard
-      </div>
-    </div>
-
-    <div class="footer-txt">© 2026 ShopMaster Bangladesh · All rights reserved.</div>
-
+<div class="sec" id="pricing">
+  <div data-r>
+    <div class="sec-eye">Simple Pricing</div>
+    <h2 class="sec-h">One product,<br>transparent plans</h2>
+    <p class="sec-sub">No hidden fees. Pay once for setup, then choose the subscription that suits you.</p>
   </div>
 
-  <!-- AFTER LAUNCH -->
-  <div id="afterLaunch">
-    <span class="launch-emoji">🎉</span>
-    <div class="launch-headline">We're Live!</div>
-    <p class="launch-sub">ShopMaster is now live. Copy your credentials below and enter your dashboard.</p>
-    <div class="cred-box">
-      <div class="cred-row">
-        <div class="cred-info"><div class="cred-lbl">Shop ID</div><div class="cred-val" id="shopid">S-313</div></div>
-        <button class="copy-btn" onclick="copyText('shopid',this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy
-        </button>
+  <div class="setup-strip" data-r>
+    <div class="setup-l">
+      <div class="setup-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;stroke:var(--gr)"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
       </div>
-      <div class="cred-row">
-        <div class="cred-info"><div class="cred-lbl">Mobile Number</div><div class="cred-val" id="phone">01900000000</div></div>
-        <button class="copy-btn" onclick="copyText('phone',this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy
-        </button>
-      </div>
-      <div class="cred-row">
-        <div class="cred-info"><div class="cred-lbl">Password</div><div class="cred-val" id="password">123456</div></div>
-        <button class="copy-btn" onclick="copyText('password',this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy
-        </button>
+      <div>
+        <div class="setup-label">One-Time Setup Cost</div>
+        <div class="setup-hint">We configure everything — ready within 24 hours</div>
       </div>
     </div>
-    <button class="enter-btn" onclick="enterApp()">
-      Enter ShopMaster
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-    </button>
-    <div class="footer-txt" style="margin-top:22px;">© 2026 ShopMaster Bangladesh · All rights reserved.</div>
+    <div class="setup-r">
+      <span class="setup-was">৳799</span>
+      <span class="setup-price">৳599</span>
+      <span class="setup-tag">Today Only</span>
+    </div>
+  </div>
+  <div class="info-bar" data-r>
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <p><strong>Setup fee is charged once</strong> to cover full account configuration, product catalogue setup, and onboarding — so you're ready to sell from day one.</p>
   </div>
 
+  <div class="plans" data-r>
+    <div class="plan">
+      <div class="plan-hd">
+        <div class="plan-ico ico-b">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="plan-name">Monthly Plan</div>
+      </div>
+      <div>
+        <div class="plan-price">৳299<span>/mo</span></div>
+        <div class="plan-reg" style="margin-bottom:6px">Regular ৳399/mo</div>
+        <div class="plan-save">Save ৳100 per month</div>
+      </div>
+      <button class="plan-btn" onclick="selectPlan('Monthly — ৳299/mo')">Choose Monthly →</button>
+    </div>
+
+    <div class="plan plan--hot">
+      <div class="hot-badge">🔥 Most Popular</div>
+      <div class="plan-hd">
+        <div class="plan-ico ico-g">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="15" r="1" fill="var(--gr)" stroke="none"/><circle cx="12" cy="15" r="1" fill="var(--gr)" stroke="none"/><circle cx="16" cy="15" r="1" fill="var(--gr)" stroke="none"/></svg>
+        </div>
+        <div class="plan-name">6-Month Plan</div>
+      </div>
+      <div>
+        <div class="plan-price">৳1,699<span>/6mo</span></div>
+        <div class="plan-reg" style="margin-bottom:6px">Regular ৳2,394</div>
+        <div class="plan-save">Save ৳695 — 29% off</div>
+      </div>
+      <button class="plan-btn plan-btn--gr" onclick="selectPlan('6 Months — ৳1,699')">Choose 6 Months →</button>
+    </div>
+
+    <div class="plan">
+      <div class="plan-hd">
+        <div class="plan-ico ico-a">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="9 16 11 18 15 14"/></svg>
+        </div>
+        <div class="plan-name">Annual Plan</div>
+      </div>
+      <div>
+        <div class="plan-price">৳3,299<span>/yr</span></div>
+        <div class="plan-reg" style="margin-bottom:6px">Regular ৳4,788</div>
+        <div class="plan-save">Save ৳1,489 — 31% off</div>
+      </div>
+      <button class="plan-btn" onclick="selectPlan('Annual — ৳3,299')">Choose Annual →</button>
+    </div>
+  </div>
+
+  <div class="perks-row" data-r>
+    <div class="perk"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>No hidden fees</div>
+    <div class="perk"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Cancel anytime</div>
+    <div class="perk"><svg viewBox="0 0 24 24" fill="var(--gr)" stroke="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>WhatsApp support</div>
+    <div class="perk"><svg viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>1 free month with setup</div>
+  </div>
 </div>
+
+<div class="sec" id="faq" style="padding-top:0">
+  <div style="padding-bottom:50px" data-r>
+    <div class="sec-eye">Refund Policy</div>
+    <h2 class="sec-h" style="margin-bottom:22px">Our fair refund policy</h2>
+    <div class="refund-card">
+      <div class="refund-hd">
+        <div class="refund-hd-ico"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+        <div>
+          <h3>Subscription Refund</h3>
+          <p>Applies to your subscription fee only — calculated from your billing date</p>
+        </div>
+      </div>
+      <div class="refund-cols">
+        <div class="refund-col">
+          <div class="rc-lbl">Within</div>
+          <div class="rc-period">1 – 7 Days</div>
+          <div class="rbadge rb-g">✓ 100% Refund</div>
+        </div>
+        <div class="refund-col">
+          <div class="rc-lbl">Between</div>
+          <div class="rc-period">8 – 15 Days</div>
+          <div class="rbadge rb-y">− 50% Refund</div>
+        </div>
+        <div class="refund-col">
+          <div class="rc-lbl">After</div>
+          <div class="rc-period">15 Days</div>
+          <div class="rbadge rb-r">✕ No Refund</div>
+        </div>
+      </div>
+      <div class="refund-ft">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <p><strong>Setup fee is non-refundable.</strong> It covers the one-time professional configuration of your store and is not included in the subscription refund policy above.</p>
+      </div>
+    </div>
+  </div>
+
+  <div data-r>
+    <div class="sec-eye">Questions</div>
+    <h2 class="sec-h" style="margin-bottom:24px">Common questions</h2>
+  </div>
+
+  <div class="faq-list" data-r>
+    <div class="fq">
+      <button class="fq-trigger">How long does setup take?<span class="fq-ico">+</span></button>
+      <div class="fq-ans">Your account is fully configured within 24 hours of payment. We handle everything — you just log in and start selling.</div>
+    </div>
+    <div class="fq">
+      <button class="fq-trigger">Do I need any technical knowledge?<span class="fq-ico">+</span></button>
+      <div class="fq-ans">Not at all. ShopMaster Pro is designed for everyday business owners. The interface is clean and intuitive — no training required.</div>
+    </div>
+    <div class="fq">
+      <button class="fq-trigger">Can I upgrade my plan later?<span class="fq-ico">+</span></button>
+      <div class="fq-ans">Yes. You can switch between monthly, 6-month, and annual plans at any time from your dashboard, with no penalties.</div>
+    </div>
+    <div class="fq">
+      <button class="fq-trigger">What happens after my free month ends?<span class="fq-ico">+</span></button>
+      <div class="fq-ans">You'll receive a reminder before the free period ends and can choose your preferred subscription plan. We never charge you without notice.</div>
+    </div>
+    <div class="fq">
+      <button class="fq-trigger">Is the setup fee refundable?<span class="fq-ico">+</span></button>
+      <div class="fq-ans">The setup fee is non-refundable. It covers the full professional configuration of your store. Subscription refunds follow our tiered policy: 100% within 7 days, 50% between 8–15 days, and no refund after 15 days.</div>
+    </div>
+  </div>
 </div>
+
+<div class="sec" id="register" style="padding-top:0">
+  <div data-r>
+    <div class="sec-eye">Get Started</div>
+    <h2 class="sec-h">Register your shop</h2>
+    <p class="sec-sub">Fill in the form below and we'll have your store ready within 24 hours.</p>
+  </div>
+
+  <div class="reg-grid" data-r>
+    <div class="reg-info">
+      <h3>You're one step away from running a smarter business</h3>
+      <p>Submit your details and our team will contact you via WhatsApp within a few hours to complete setup and confirm payment.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-txt"><strong>Fill the form</strong><span>Takes less than 2 minutes</span></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-txt"><strong>We'll contact you</strong><span>Via WhatsApp within a few hours</span></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-txt"><strong>Pay &amp; get access</strong><span>Store ready within 24 hours</span></div></div>
+      </div>
+    </div>
+
+    <div class="reg-form">
+      <div class="form-hd">
+        <div class="form-hd-ico">🏪</div>
+        <div>
+          <h4>Shop Registration</h4>
+          <p>Fields marked <span style="color:var(--gr)">*</span> are required</p>
+        </div>
+      </div>
+
+      <div id="regForm" class="fg">
+        <div class="f-sec-label">Owner Information</div>
+        <div class="f"><label>Owner Name <span class="req">*</span></label><input type="text" id="ownerName" placeholder="Your full name"/></div>
+        <div class="f"><label>Mobile Number <span class="req">*</span></label><input type="tel" id="mobile" placeholder="01XXXXXXXXX"/></div>
+        <div class="f full"><label>WhatsApp Number <span class="req">*</span></label><input type="tel" id="whatsapp" placeholder="01XXXXXXXXX (same as mobile if same)"/></div>
+
+        <div class="f-sec-label">Shop Details</div>
+        <div class="f full"><label>Shop Name <span class="req">*</span></label><input type="text" id="shopName" placeholder="e.g. Rahim Fashion House"/></div>
+        <div class="f"><label>Business Type <span class="req">*</span></label>
+          <select id="bizType"><option value="" disabled selected>Select type</option><option>Retail Store</option><option>Grocery Shop</option><option>Fashion / Clothing</option><option>Electronics</option><option>Online Shop</option><option>Food &amp; Restaurant</option><option>Pharmacy</option><option>Other</option></select>
+        </div>
+        <div class="f"><label>Address <span class="req">*</span></label><input type="text" id="address" placeholder="Area, District"/></div>
+
+        <div class="f-sec-label">Plan &amp; Payment</div>
+        <div class="f"><label>Plan <span class="req">*</span></label>
+          <select id="plan"><option value="" disabled selected>Select plan</option><option>Monthly — ৳299/mo</option><option>6 Months — ৳1,699</option><option>Annual — ৳3,299</option></select>
+        </div>
+        <div class="f"><label>Payment Method <span class="req">*</span></label>
+          <select id="payment"><option value="" disabled selected>Select method</option><option>bKash</option><option>Nagad</option><option>Rocket</option><option>Bank Transfer</option><option>Cash</option></select>
+        </div>
+
+        <div class="f-sec-label">Optional</div>
+        <div class="f"><label>Email <span class="opt-tag">Optional</span></label><input type="email" id="email" placeholder="you@example.com"/></div>
+        <div class="f"><label>Facebook Page <span class="opt-tag">Optional</span></label><input type="text" id="fbPage" placeholder="facebook.com/yourpage"/></div>
+
+        <div class="f-submit">
+          <button class="sub-btn" id="submitBtn" onclick="submitReg()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Submit Registration
+          </button>
+        </div>
+        <div class="f-note">By submitting, you agree to our refund policy. We will contact you via WhatsApp to confirm your order.</div>
+      </div>
+
+      <div class="success" id="successMsg">
+        <div class="success-ico"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h4>তথ্য সংরক্ষিত হয়েছে!</h4>
+        <p style="font-size:13px;color:var(--t2);max-width:310px;line-height:1.7">এখন নিচের বাটনে ক্লিক করুন — WhatsApp খুলবে, message already লেখা থাকবে, শুধু <strong style="color:var(--t1)">Send</strong> চাপুন।</p>
+
+        <div style="background:#0a1a0f;border:1px solid rgba(34,197,94,0.2);border-radius:12px;padding:16px 18px;width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--t2)">
+            <div style="width:22px;height:22px;border-radius:50%;background:var(--gr2);border:1px solid rgba(34,197,94,0.3);color:var(--gr);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
+            নিচের বাটনে ক্লিক করুন
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--t2)">
+            <div style="width:22px;height:22px;border-radius:50%;background:var(--gr2);border:1px solid rgba(34,197,94,0.3);color:var(--gr);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
+            WhatsApp এ message ready থাকবে
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--t2)">
+            <div style="width:22px;height:22px;border-radius:50%;background:var(--gr2);border:1px solid rgba(34,197,94,0.3);color:var(--gr);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+            শুধু <strong style="color:var(--gr)">&nbsp;Send&nbsp;</strong> বাটন চাপুন
+          </div>
+        </div>
+
+        <a id="waConfirmBtn" class="success-wa-btn" href="#" target="_blank" style="width:100%;max-width:320px;justify-content:center;height:48px;font-size:14.5px;border-radius:10px;box-shadow:0 6px 20px rgba(37,211,102,0.25)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+          WhatsApp এ পাঠান →
+        </a>
+
+        <p style="font-size:11px;color:var(--t3);margin-top:-4px">Message পাঠানোর পর আমরা আপনাকে confirm করব</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-wrap" data-r>
+  <div class="cta-blk">
+    <div>
+      <h2>Ready to take control<br>of your business?</h2>
+      <p>Join hundreds of shops already running smarter with ShopMaster Pro.</p>
+    </div>
+    <div class="cta-acts">
+      <button class="btn-primary" onclick="document.getElementById('register').scrollIntoView({behavior:'smooth'})">Register Now — ৳599 →</button>
+      <button class="btn-ghost"onclick="window.open('https://wa.me/8801915647290','_blank')" >
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        Chat on WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a class="logo" href="#" style="font-size:15px">Shop<b>Master</b> Pro</a>
+  <span>© 2025 ShopMaster Pro. All rights reserved.</span>
+</footer>
 
 <script>
-// ============ ANIMATED BG CANVAS ============
-const canvas=document.getElementById("bgCanvas");
-const ctx=canvas.getContext("2d");
-let W,H,nodes=[];
-
-function resize(){
-  W=canvas.width=window.innerWidth;
-  H=canvas.height=window.innerHeight;
-}
-resize();
-window.addEventListener("resize",()=>{resize();initNodes();});
-
-function initNodes(){
-  nodes=[];
-  const count=Math.floor((W*H)/14000);
-  for(let i=0;i<count;i++){
-    nodes.push({
-      x:Math.random()*W,y:Math.random()*H,
-      vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,
-      r:Math.random()*2+1,
-      color:Math.random()>.5?`rgba(199,125,255,`:`rgba(232,184,109,`,
-      pulse:Math.random()*Math.PI*2
-    });
-  }
-}
-initNodes();
-
-let t=0;
-function draw(){
-  ctx.clearRect(0,0,W,H);
-
-  // deep gradient bg
-  const bg=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*.8);
-  bg.addColorStop(0,"rgba(25,10,55,.98)");
-  bg.addColorStop(.5,"rgba(12,7,28,.99)");
-  bg.addColorStop(1,"rgba(7,5,14,1)");
-  ctx.fillStyle=bg;
-  ctx.fillRect(0,0,W,H);
-
-  // moving aurora blobs
-  const blobs=[
-    {x:W*.15+Math.sin(t*.0007)*120,y:H*.2+Math.cos(t*.0005)*80,r:400,c:"rgba(199,125,255,.07)"},
-    {x:W*.8+Math.cos(t*.0006)*100,y:H*.7+Math.sin(t*.0008)*90,r:380,c:"rgba(232,184,109,.06)"},
-    {x:W*.5+Math.sin(t*.0004)*80,y:H*.5+Math.cos(t*.0009)*60,r:300,c:"rgba(80,60,200,.08)"},
-  ];
-  blobs.forEach(b=>{
-    const g=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
-    g.addColorStop(0,b.c);
-    g.addColorStop(1,"transparent");
-    ctx.fillStyle=g;
-    ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();
-  });
-
-  // grid
-  ctx.strokeStyle="rgba(255,255,255,.018)";
-  ctx.lineWidth=1;
-  const gs=70;
-  for(let x=0;x<W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=0;y<H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-
-  // nodes + connections
-  t++;
-  nodes.forEach(n=>{
-    n.x+=n.vx; n.y+=n.vy;
-    if(n.x<0||n.x>W) n.vx*=-1;
-    if(n.y<0||n.y>H) n.vy*=-1;
-    n.pulse+=.02;
-    const alpha=.3+Math.sin(n.pulse)*.2;
-    ctx.beginPath();
-    ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
-    ctx.fillStyle=n.color+alpha+")";
-    ctx.fill();
-  });
-
-  // draw connections
-  for(let i=0;i<nodes.length;i++){
-    for(let j=i+1;j<nodes.length;j++){
-      const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
-      const dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist<130){
-        const alpha=(1-dist/130)*.12;
-        ctx.beginPath();
-        ctx.moveTo(nodes[i].x,nodes[i].y);
-        ctx.lineTo(nodes[j].x,nodes[j].y);
-        ctx.strokeStyle=`rgba(180,140,255,${alpha})`;
-        ctx.lineWidth=.8;
-        ctx.stroke();
-      }
-    }
-  }
-
-  // horizontal light streak
-  const streakY=H*.5+Math.sin(t*.003)*H*.3;
-  const sg=ctx.createLinearGradient(0,streakY,W,streakY);
-  sg.addColorStop(0,"transparent");
-  sg.addColorStop(.3,`rgba(199,125,255,${.04+Math.sin(t*.01)*.02})`);
-  sg.addColorStop(.7,`rgba(232,184,109,${.03+Math.sin(t*.008)*.02})`);
-  sg.addColorStop(1,"transparent");
-  ctx.fillStyle=sg;
-  ctx.fillRect(0,streakY-1,W,2);
-
-  requestAnimationFrame(draw);
-}
-draw();
-
-// ============ FLOATING ICONS ============
-const icons=["🛒","📦","💳","🏪","🧾","📊","💰","🔖","📱","⚡"];
-function spawnIcon(){
-  const el=document.createElement("div");
-  el.className="float-icon";
-  el.innerText=icons[Math.floor(Math.random()*icons.length)];
-  el.style.left=Math.random()*95+"%";
-  el.style.bottom="-40px";
-  const dur=7+Math.random()*8;
-  el.style.animationDuration=dur+"s";
-  el.style.animationDelay="0s";
-  el.style.fontSize=(16+Math.random()*14)+"px";
-  document.body.appendChild(el);
-  setTimeout(()=>el.remove(),(dur+1)*1000);
-}
-setInterval(spawnIcon,1200);
-
-// ============ TICKER ============
-const tickerItems=[
-  {icon:"🚀",text:"ShopMaster launching at",val:"9:30 PM tonight"},
-  {icon:"🏪",text:"Built for",val:"Bangladesh businesses"},
-  {icon:"📊",text:"Features:",val:"POS · Inventory · Reports"},
-  {icon:"🔐",text:"Shop ID:",val:"S-313"},
-  {icon:"☁️",text:"Platform:",val:"Secure Cloud"},
-  {icon:"📱",text:"Works on",val:"Mobile & Desktop"},
-  {icon:"⚡",text:"Speed:",val:"Real-time sync"},
-  {icon:"🎯",text:"Version:",val:"ShopMaster v1.0"},
-];
-const track=document.getElementById("tickerTrack");
-const doubled=[...tickerItems,...tickerItems];
-doubled.forEach(item=>{
-  const div=document.createElement("div");
-  div.className="ticker-item";
-  div.innerHTML=`${item.icon} ${item.text} <span>${item.val}</span>`;
-  track.appendChild(div);
+// Scroll reveal
+document.querySelectorAll('[data-r]').forEach(el => {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  obs.observe(el);
 });
 
-// ============ FUN FACTS ============
-const facts=[
-  "💡 Bangladesh's retail market is growing at <strong>10%+ per year</strong> — ShopMaster is built to scale with you.",
-  "📦 ShopMaster can track <strong>unlimited products</strong> across multiple categories in real time.",
-  "💳 Integrated POS means <strong>faster checkout</strong> — serve more customers, earn more revenue.",
-  "📊 Get daily, weekly & monthly <strong>sales reports</strong> automatically — no manual work needed.",
-  "🛒 Smart inventory alerts notify you <strong>before stock runs out</strong> — never miss a sale.",
-  "🔐 All data is <strong>encrypted & backed up</strong> to the cloud every hour.",
-  "⚡ ShopMaster dashboard loads in <strong>under 2 seconds</strong> on any device.",
-  "🌐 Works perfectly on <strong>mobile, tablet & desktop</strong> — manage from anywhere.",
-];
-let factIdx=0;
-const factEl=document.getElementById("funfact");
-function nextFact(){
-  factEl.style.opacity="0";
-  setTimeout(()=>{
-    factEl.innerHTML=facts[factIdx];
-    factEl.style.opacity="1";
-    factIdx=(factIdx+1)%facts.length;
-  },400);
+// FAQ accordion
+document.querySelectorAll('.fq-trigger').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.fq');
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.fq').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  });
+});
+
+// Select plan from pricing section
+function selectPlan(planValue) {
+  const planSelect = document.getElementById('plan');
+  planSelect.value = planValue;
+  document.getElementById('register').scrollIntoView({ behavior: 'smooth' });
 }
-nextFact();
-setInterval(nextFact,4000);
 
-// ============ STATUS ============
-const statuses=["Initializing commerce engine...","Syncing merchant network...","Loading inventory modules...","Verifying secure access...","Preparing POS interface...","Final pre-launch checks..."];
-let si=0;
-setInterval(()=>{
-  document.getElementById("statusText").innerText=statuses[si];
-  si=(si+1)%statuses.length;
-},2800);
+// ═══════════════════════════════════════════════
+// WhatsApp number (admin)
+// ═══════════════════════════════════════════════
+const WA_NUMBER = '8801915647290';
 
-// ============ LAUNCH TIME ============
-const launchDate=new Date();
-launchDate.setHours(21,30,0,0);
+function buildWhatsAppMessage(data) {
+  return `🏪 *নতুন ShopMaster Pro Registration*
 
-const totalDuration=3*60*60*1000; // treat max 3hr window for ring
+👤 *Owner:* ${data.ownerName}
+📱 *Mobile:* ${data.mobile}
+💬 *WhatsApp:* ${data.whatsapp}
 
-const beforeLaunch=document.getElementById("beforeLaunch");
-const afterLaunch=document.getElementById("afterLaunch");
+🏬 *Shop Name:* ${data.shopName}
+🗂️ *Business Type:* ${data.bizType}
+📍 *Address:* ${data.address}
 
-function pad(n){return String(n).padStart(2,"0");}
+📦 *Plan:* ${data.plan}
+💳 *Payment Method:* ${data.payment}
+${data.email ? `📧 *Email:* ${data.email}` : ''}
+${data.fbPage ? `🔗 *Facebook:* ${data.fbPage}` : ''}
 
-function flipNum(id,val){
-  const el=document.getElementById(id);
-  const newVal=pad(val);
-  if(el.innerText!==newVal){
-    el.style.transition="transform .12s ease,opacity .12s ease";
-    el.style.transform="translateY(-8px)";el.style.opacity="0";
-    setTimeout(()=>{
-      el.innerText=newVal;
-      el.style.transition="transform .18s cubic-bezier(.34,1.56,.64,1),opacity .18s ease";
-      el.style.transform="translateY(0)";el.style.opacity="1";
-    },130);
+---
+_Submitted from ShopMaster Pro website_`;
+}
+
+function submitReg() {
+  const required = ['ownerName','mobile','whatsapp','shopName','bizType','address','plan','payment'];
+  let first = null;
+
+  required.forEach(id => {
+    const el = document.getElementById(id);
+    el.style.borderColor = '';
+    if (!el.value.trim()) {
+      el.style.borderColor = '#f87171';
+      if (!first) first = el;
+    }
+  });
+
+  if (first) {
+    first.focus();
+    first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
   }
+
+  const data = {
+    ownerName: document.getElementById('ownerName').value.trim(),
+    mobile:    document.getElementById('mobile').value.trim(),
+    whatsapp:  document.getElementById('whatsapp').value.trim(),
+    shopName:  document.getElementById('shopName').value.trim(),
+    bizType:   document.getElementById('bizType').value,
+    address:   document.getElementById('address').value.trim(),
+    plan:      document.getElementById('plan').value,
+    payment:   document.getElementById('payment').value,
+    email:     document.getElementById('email').value.trim(),
+    fbPage:    document.getElementById('fbPage').value.trim(),
+  };
+
+  // WhatsApp link তৈরি করো
+  const msg = buildWhatsAppMessage(data);
+  const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  document.getElementById('waConfirmBtn').href = waUrl;
+
+  // Success screen দেখাও
+  document.getElementById('regForm').style.display = 'none';
+  document.getElementById('successMsg').classList.add('show');
 }
-
-const ringEl=document.getElementById("ringCircle");
-const ringPct=document.getElementById("ringPct");
-const circumference=565;
-
-const timer=setInterval(()=>{
-  const dist=launchDate.getTime()-Date.now();
-  if(dist<=0){
-    clearInterval(timer);
-    beforeLaunch.style.display="none";
-    afterLaunch.style.display="block";
-    fire();return;
-  }
-  const h=Math.floor((dist%(864e5))/(36e5));
-  const m=Math.floor((dist%(36e5))/(6e4));
-  const s=Math.floor((dist%6e4)/1e3);
-  flipNum("hours",h);flipNum("minutes",m);flipNum("seconds",s);
-
-  // ring progress
-  const elapsed=Math.max(0,totalDuration-dist);
-  const progress=Math.min(elapsed/totalDuration,1);
-  ringEl.style.strokeDashoffset=circumference*(1-progress);
-  const pctVal=Math.round(progress*100);
-  ringPct.innerText=pctVal+"%";
-},1000);
-
-// ============ CONFETTI ============
-function fire(){
-  confetti({particleCount:300,spread:160,origin:{y:.6},colors:["#e8b86d","#c77dff","#ffffff","#8ab4f8"]});
-  setTimeout(()=>{
-    confetti({particleCount:150,angle:60,spread:100,origin:{x:0},colors:["#e8b86d","#c77dff"]});
-    confetti({particleCount:150,angle:120,spread:100,origin:{x:1},colors:["#e8b86d","#c77dff"]});
-  },500);
-  setTimeout(()=>{confetti({particleCount:80,spread:120,origin:{y:.3},scalar:.6,colors:["#e8b86d","#f5d08a"]});},1000);
-}
-
-// ============ COPY ============
-function copyText(id,btn){
-  navigator.clipboard.writeText(document.getElementById(id).innerText).catch(()=>{});
-  const orig=btn.innerHTML;
-  btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;stroke:currentColor"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
-  btn.style.background="linear-gradient(135deg,#22c55e,#16a34a)";
-  setTimeout(()=>{btn.innerHTML=orig;btn.style.background="";},1800);
-}
-
-function enterApp(){window.location.href="https://shopmaster-owner.onrender.com/";}
 </script>
 </body>
 </html>
